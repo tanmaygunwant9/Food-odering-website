@@ -1,0 +1,221 @@
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-image: url('pz.jpg');
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat; 
+    color: #333;
+    line-height: 1.6;
+}
+
+
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-blend-mode: lighten;
+    color: white;
+    padding: 1rem 2rem;
+    box-shadow: 0 2px 4px rgb(246, 246, 246);
+}
+
+.brand {
+    font-size: 1.8rem;
+    font-weight: bold;
+}
+
+.nav-links {
+    display: flex;
+    gap: 1.5rem;
+}
+
+.nav-links a {
+    color: rgb(17, 16, 16);
+    text-decoration: none;
+    font-size: 1.1rem;
+    transition: color 0.3s;
+}
+
+.nav-links a:hover {
+    color: #25075d;
+    text-decoration: underline;
+}
+
+#authSection {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+#userDisplay {
+    color: white;
+    font-weight: 500;
+}
+
+.btn {
+    text-decoration: none;
+    color: var(red);
+    font-weight: 500;
+    transition: var(--transition);
+    padding: 0.6rem 1.2rem;
+    border-radius: var(--radius);
+    font-size: 0.92rem;
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+    font-family: var(--font-display);
+    letter-spacing: 0.3px;
+    border-radius: 0.1px;
+}
+
+
+.btn:hover {
+    background-color: #4e316f;
+    transform: translateY(-2px);
+}
+
+
+.order-container {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 2rem;
+    font-family:'Times New Roman', Times, serif ;
+    background-color:rgba(0, 0, 0, 0.1);
+    background-blend-mode: lighten;
+    box-shadow: #555;
+    border-style: groove;
+    border-radius: 8px;
+    align-items: center;
+    justify-content: center;
+    color: black;
+}
+
+.order-container h2 {
+    color: #fafcfa;
+    background-blend-mode: hue;
+    margin-bottom: 1.5rem;
+    font-size: 2.8rem;
+    border-bottom: 2px solid #e0e0e0;
+    padding-bottom: 0.5rem;
+}
+
+
+#orderForm {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+#orderForm label {
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: #f3ecec;
+}
+
+#orderForm select, 
+#orderForm input[type="number"] {
+    padding: 0.8rem;
+    border: 1px solid #eeebeb;
+    border-radius: 4px;
+    font-size: 1rem;
+    transition: border-color 0.3s;
+}
+
+#orderForm select:focus, 
+#orderForm input[type="number"]:focus {
+    border-color: #12100f;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
+}
+
+#orderForm input[type="submit"] {
+    background-color: #d35e10;
+    color: white;
+    padding: 0.8rem;
+    border: none;
+    border-radius: 4px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 1rem;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+#orderForm input[type="submit"]:hover {
+    background-color: #2E7D32;
+    transform: translateY(-2px);
+}
+
+#orderForm input[type="submit"]:active {
+    transform: translateY(0px);
+}
+
+
+#orderResponse {
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin-top: 2rem;
+    transition: all 0.3s;
+}
+
+#responseTitle {
+    font-size: 1.4rem;
+    margin-bottom: 1rem;
+}
+
+#responseDetails {
+    line-height: 1.8;
+}
+
+#responseDetails p {
+    margin-bottom: 0.5rem;
+}
+
+#pointsInfo {
+    margin-top: 1rem;
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+
+
+@media (max-width: 768px) {
+    .navbar {
+        flex-direction: column;
+        padding: 1rem;
+        gap: 1rem;
+    }
+    
+    .nav-links {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    #authSection {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .order-container {
+        margin: 1rem;
+        padding: 1.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .nav-links {
+        flex-direction: column;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    #orderForm input[type="submit"] {
+        padding: 0.7rem;
+    }
+}

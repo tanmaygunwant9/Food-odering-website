@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quick Canteen - Order</title>
+    <link rel="stylesheet" href="STYLE.css">
+</head>
+<body>
+
+    
+    <nav class="navbar">
+        <h1 class="brand">Quick Canteen</h1>
+        <div class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="order.html">Order</a>
+            <a href="contact.html">Contact</a>
+        </div>
+        <div id="authSection">
+            <span id="userDisplay"></span>
+            <button id="logoutBtn" class="btn">Logout</button>
+        </div>
+    </nav>
+
+    
+    <div class="order-container">
+        <h2>Place Your Order</h2>
+    
+        <form id="orderForm">
+            <label for="meal"><b>Select a Meal:</b></label>
+            <select id="meal">
+                <option value="Pizza" data-price="50">Pizza - 50 Points</option>
+                <option value="Burger" data-price="40">Burger - 40 Points</option>
+                <option value="Pasta" data-price="30">Pasta - 30 Points</option>
+                <option value="Sandwich" data-price="20">Sandwich - 20 Points</option>
+            </select>
+            
+            <label for="quantity">Quantity:</label>
+            <input type="number" id="quantity" min="1" value="1">
+
+    
+            <input type="submit" value="Place Order">
+        </form>
+        
+    
+        <div id="orderResponse" style="display: none; margin-top: 20px; padding: 15px; border-radius: 5px;">
+            <h3 id="responseTitle"></h3>
+            <div id="responseDetails"></div>
+            <div id="pointsInfo" style="margin-top: 10px; font-weight: bold;"></div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+    
+        document.addEventListener('DOMContentLoaded', function() {
+
+            const storedUser = localStorage.getItem("username");
+            
+            if (!storedUser) {
+                alert("You must be logged in to access this page!");
+                window.location.href = "index.html"; 
+            } else {
+                const userDisplayElement = document.getElementById("userDisplay");
+                if (userDisplayElement) {
+                    userDisplayElement.innerText = `Welcome, ${storedUser}`;
+                }
+            }
+
+            
+            const logoutBtn = document.getElementById("logoutBtn");
+            if (logoutBtn) {
+                logoutBtn.addEventListener("click", function() {
+                    localStorage.removeItem("username");
+                    localStorage.removeItem("points");
+                    window.location.href = "index.html"; 
+                });
+            }
+        });
+
+        
+        
+            const orderForm=document.getElementById('orderForm');
+            console.log(orderForm)
+            orderForm.addEventListener("submit",(event)=>{event.preventDefault();
+        
+            
+            
+            const meal = document.getElementById("meal").value;
+            const quantity = parseInt(document.getElementById("quantity").value);
+            const totalPoints = quantity * document.getElementById("meal").selectedOptions[0].getAttribute("data-price");
+
+            const username = localStorage.getItem("username");
+            let userPoints = parseInt(localStorage.getItem("points") || "0");
+
+            if (!username) {
+                alert("You must be logged in to place an order!");
+                window.location.href = "index.html";
+                return false;
+            }
+
+        
+            const responseSection = document.getElementById("orderResponse");
+            const responseTitle = document.getElementById("responseTitle");
+            const responseDetails = document.getElementById("responseDetails");
+            const pointsInfo = document.getElementById("pointsInfo");
+
+            if (userPoints >= totalPoints) {
+        
+                responseSection.style.display = "block";
+                responseSection.style.backgroundColor = "#f5f5f5";
+                responseSection.style.border = "1px solid #ddd";
+                responseTitle.innerHTML = "⏳ Processing Order...";
+                responseDetails.innerHTML = "<p>Please wait while we process your order.</p>";
+                pointsInfo.innerHTML = "";
+                
+                fetch("http://localhost:3000/place-order", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ username, meal, quantity, totalPoints }),
+                })
+                .then(response => response.json())
+                .then(data => {
+        
+                    responseSection.style.display = "block";
+                    
+                    if (data.success) {
+                        userPoints -= totalPoints;
+                        localStorage.setItem("points", userPoints);
+                        
+        
+                        responseSection.style.backgroundColor = "#e7f7e7";
+                        responseSection.style.border = "1px solid #a3d9a3";
+                        
+        
+                        responseTitle.innerHTML = "✅ Order Placed Successfully!";
+                        responseDetails.innerHTML = `
+                            <p><strong>Items:</strong> ${quantity} x ${meal}</p>
+                            <p><strong>Order Number:</strong> #${data.orderNumber}</p>
+                            <p><strong>Points Used:</strong> ${totalPoints}</p>
+                        `;
+                        pointsInfo.innerHTML = `Remaining Points: ${userPoints}`;
+                    } else {
+        
+                        responseSection.style.backgroundColor = "#ffebeb";
+                        responseSection.style.border = "1px solid #ffb8b8";
+                        
+        
+                        responseTitle.innerHTML = "❌ Order Failed";
+                        responseDetails.innerHTML = `<p>${data.error}</p>`;
+                        pointsInfo.innerHTML = `Available Points: ${userPoints}`;
+                    }
+                })
+                .catch(error => {
+        
+                    responseSection.style.display = "block";
+                    responseSection.style.backgroundColor = "#fff9e6";
+                    responseSection.style.border = "1px solid #ffe0b2";
+                    
+                    responseTitle.innerHTML = "⚠️ System Error";
+                    responseDetails.innerHTML = "<p>An error occurred while placing the order. Please try again later.</p>";
+                    pointsInfo.innerHTML = "";
+                    
+                    console.error("Error:", error);
+                });
+            } else {
+        
+                responseSection.style.display = "block";
+                responseSection.style.backgroundColor = "#ffebeb";
+                responseSection.style.border = "1px solid #ffb8b8";
+                
+                responseTitle.innerHTML = "❌ Insufficient Points";
+                responseDetails.innerHTML = `
+                    <p>You don't have enough points to complete this order.</p>
+                    <p><strong>Required:</strong> ${totalPoints} points</p>
+                `;
+                pointsInfo.innerHTML = `Available Points: ${userPoints}`;
+            }
+            
+       
+           
+        })
+    </script>
+
+</body>
+</html>

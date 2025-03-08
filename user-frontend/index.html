@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quick Canteen - User Login</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    
+    <nav class="navbar">
+        <h1 class="brand">Quick Canteen</h1>
+        <div class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="order.html">Order</a>
+            <a href="contact.html">Contact</a>
+        </div>
+        <div id="authSection">
+        </div>
+    </nav>
+
+    
+    <div class="login-container">
+        <h2>Account Login</h2>
+        <input type="number" id="username" placeholder="Enter Student Id">
+        <br><button onclick="createAccount()">Create Account</button>
+        <button onclick="getAccount()">Login</button>
+        <p id="accountMessage"></p>
+    </div>
+
+    
+    <div class="dashboard hidden">
+        <h2>Welcome, <span id="userDisplay"></span>!</h2>
+        <p>Your Points: <span id="pointsDisplay">0</span></p>
+        <button onclick="logout()">Logout</button>
+    </div>
+
+    <script src="script.js"></script>
+
+</body>
+</html>
