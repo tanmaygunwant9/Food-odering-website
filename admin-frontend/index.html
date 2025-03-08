@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Manage Users & Orders</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 20px;
+            background-color: #f4f4f4;
+            text-align: center;
+        }
+        .container {
+            max-width: 500px;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin: auto;
+        }
+        input, button {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        #userDetails {
+            display: none;
+            margin-top: 20px;
+            text-align: left;
+        }
+        .orders-container {
+            margin-top: 20px;
+            text-align: left;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #007bff;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Admin Dashboard</h2>
+        
+        <h3>Search User</h3>
+        <input type="text" id="searchUser" placeholder="Enter Username">
+        <button onclick="searchUser()">Search</button>
+        
+        <div id="userDetails">
+            <h3>User Details</h3>
+            <p><strong>Name:</strong> <span id="userName"></span></p>
+            <p><strong>Current Points:</strong> <span id="userPoints"></span></p>
+            <input type="number" id="addPoints" placeholder="Enter points to add">
+            <button onclick="addPoints()">Add Points</button>
+        </div>
+    </div>
+
+    <div class="container orders-container">
+        <h3>All Orders</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Order #</th>
+                    <th>Username</th>
+                    <th>Meal</th>
+                    <th>Qty</th>
+                    <th>Points Used</th>
+                    <th>Timestamp</th>
+                </tr>
+            </thead>
+            <tbody id="ordersTable">
+                <!-- Orders will be displayed here -->
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        async function searchUser() {
+            const username = document.getElementById("searchUser").value.trim();
+            if (!username) {
+                alert("Please enter a username.");
+                return;
+            }
+            
+            try {
+                const response = await fetch(`http://localhost:3000/get-account?username=${username}`);
+                const data = await response.json();
+                
+                if (response.ok) {
+                    document.getElementById("userName").textContent = username;
+                    document.getElementById("userPoints").textContent = data.account.points;
+                    document.getElementById("userDetails").style.display = "block";
+                } else {
+                    alert(data.error);
+                }
+            } catch (error) {
+                alert("Error fetching user details.");
+            }
+        }
+
+        async function addPoints() {
+            const username = document.getElementById("userName").textContent;
+            const pointsToAdd = parseInt(document.getElementById("addPoints").value);
+            
+            if (!pointsToAdd || pointsToAdd <= 0) {
+                alert("Please enter a valid number of points.");
+                return;
+            }
+            
+            try {
+                const response = await fetch("http://localhost:3000/add-points", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ username, points: pointsToAdd })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    document.getElementById("userPoints").textContent = data.account.points;
+                    alert("Points added successfully!");
+                } else {
+                    alert(data.error);
+                }
+            } catch (error) {
+                alert("Error adding points.");
+            }
+        }
+
+        async function fetchOrders() {
+            try {
+                const response = await fetch("http://localhost:3000/orders");
+                const data = await response.json();
+
+                if (response.ok) {
+                    const ordersTable = document.getElementById("ordersTable");
+                    ordersTable.innerHTML = "";
+
+                    for (const username in data.orders) {
+                        data.orders[username].forEach(order => {
+                            const row = `
+                                <tr>
+                                    <td>${order.orderNumber}</td>
+                                    <td>${username}</td>
+                                    <td>${order.meal}</td>
+                                    <td>${order.quantity}</td>
+                                    <td>${order.totalPoints}</td>
+                                    <td>${new Date(order.timestamp).toLocaleString()}</td>
+                                </tr>
+                            `;
+                            ordersTable.innerHTML += row;
+                        });
+                    }
+                } else {
+                    alert(data.error);
+                }
+            } catch (error) {
+                alert("Error fetching orders.");
+            }
+        }
+
+        // Load all orders when the page loads
+        window.onload = fetchOrders;
+    </script>
+</body>
+</html>
