@@ -1,4 +1,4 @@
-const API_URL = "http://localhost:3000"; 
+const API_URL = "https://food-odering-website-er39.vercel.app"; 
 
 
 async function createAccount() {
@@ -79,3 +79,4 @@ window.onload = function() {
         loginSuccess(storedUser, localStorage.getItem("points"));
     }
 };
+
